@@ -1,0 +1,77 @@
+<div class="dashboard-container" *ngIf="!loading; else loadingState">
+  <mat-card class="integration-card">
+    <!-- Header -->
+    <div class="card-header">
+      <img
+        *ngIf="user?.avatar_url"
+        [src]="user?.avatar_url"
+        alt="User Avatar"
+        class="avatar"
+      />
+      <div>
+        <h2>{{ user?.name || "GitHub Integration" }}</h2>
+        <p class="subtitle" *ngIf="isConnected && user?.login">
+          {{ '@' + user?.login }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="status-section">
+      <mat-chip-listbox>
+        <mat-chip
+          [color]="isConnected ? 'primary' : 'warn'"
+          selected
+          disableRipple
+        >
+          {{ isConnected ? "Connected" : "Not Connected" }}
+        </mat-chip>
+      </mat-chip-listbox>
+
+      <p *ngIf="isConnected" class="connected-at">
+        Connected on {{ connectedAt | date: "medium" }}
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <!-- Connect button -->
+      <button
+        mat-raised-button
+        color="primary"
+        *ngIf="!isConnected"
+        (click)="connect()"
+      >
+        <mat-icon>login</mat-icon>
+        Connect GitHub
+      </button>
+
+      <!-- Expansion panel for connected actions -->
+      <mat-accordion *ngIf="isConnected" class="connected-panel">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Manage Connection
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="panel-actions">
+            <button mat-stroked-button color="accent" (click)="resync()">
+              <mat-icon>sync</mat-icon> Resync
+            </button>
+            <button mat-stroked-button color="warn" (click)="remove()">
+              <mat-icon>logout</mat-icon> Remove
+            </button>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </mat-card>
+</div>
+
+<ng-template #loadingState>
+  <div class="loading-spinner">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    <p>Checking integration status...</p>
+  </div>
+</ng-template>

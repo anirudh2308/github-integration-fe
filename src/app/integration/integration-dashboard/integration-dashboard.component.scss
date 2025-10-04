@@ -1,0 +1,91 @@
+/* Container */
+.dashboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #fefefe;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Card */
+.integration-card {
+  width: 520px;             /* increased from 420px */
+  padding: 32px;            /* increased from 24px */
+  border-radius: 20px;      /* slightly bigger radius */
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.integration-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+/* Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;                /* increased gap */
+  margin-bottom: 24px;      /* increased margin */
+}
+
+.avatar {
+  width: 80px;              /* increased from 60px */
+  height: 80px;             /* increased from 60px */
+  border-radius: 50%;
+}
+
+h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.5rem;        /* increased from 1.25rem */
+  color: #212121;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 1rem;          /* increased from 0.9rem */
+}
+
+/* Status */
+.status-section {
+  margin: 24px 0;           /* increased margin */
+  text-align: center;
+}
+
+.connected-at {
+  font-size: 0.95rem;       /* increased from 0.85rem */
+  color: #999;
+  margin-top: 30px;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.connected-panel {
+  width: 100%;
+  margin-top: 16px;         /* increased margin */
+}
+
+.panel-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;                /* increased gap */
+  margin-top: 12px;         /* increased margin */
+}
+
+/* Loading */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  gap: 24px;                /* increased gap */
+}

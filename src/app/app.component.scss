@@ -1,0 +1,28 @@
+/* Toolbar */
+mat-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  height: 64px;
+  font-size: 1.1rem;
+  font-family: 'Roboto', sans-serif;
+}
+
+.app-title {
+  font-weight: 600;
+  color: white;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Main content below navbar */
+.main-content {
+  padding: 24px;
+  background: #fefefe;
+  min-height: calc(100vh - 64px); /* subtract navbar height */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
