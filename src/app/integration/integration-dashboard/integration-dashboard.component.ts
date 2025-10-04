@@ -107,17 +107,23 @@ export class IntegrationDashboardComponent implements OnInit {
   }
 
   resync(): void {
-    // if (!this.user) return; // ensure user exists
-    // this.loading = true;
-    // this.integrationService.resyncIntegration().subscribe({
-    //   next: (updatedUser:any) => {
-    //     this.user = updatedUser || this.user; // update user info if returned
-    //     this.loading = false;
-    //   },
-    //   error: () => {
-    //     this.error = 'Failed to resync.';
-    //     this.loading = false;
-    //   }
-    // });
-  }
+  if (!this.isConnected) return;
+
+  this.loading = true; // show spinner
+  this.error = '';
+
+  this.integrationService.resyncIntegration().subscribe({
+    next: (res: any) => {
+      this.loading = false;
+      // Optionally show a toast/snackbar
+      console.log(`Resync complete: ${res.orgsFetched} org(s) fetched.`);
+    },
+    error: (err) => {
+      this.loading = false;
+      this.error = 'Failed to resync integration.';
+      console.error(err);
+    }
+  });
+}
+
 }
