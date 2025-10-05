@@ -60,6 +60,7 @@ export class IntegrationDashboardComponent implements OnInit {
       this.state.setConnected(res.connected); // update navbar
       this.connectedAt = res.connectedAt || null;
       this.user = res.user?.userProfile || null;
+      console.log('Fetched integration status:', res);
     } else {
       // No integration exists
       this.isConnected = false;
@@ -84,9 +85,9 @@ export class IntegrationDashboardComponent implements OnInit {
         this.isConnected = true;
         this.connectedAt = res.connectedAt;
         this.user = res.user?.userProfile || null;
-        this.state.setConnected(true); // update navbar
         clearInterval(pollInterval);
-
+        this.resync(); // trigger initial resync
+        
         // Optional: close the OAuth window automatically
         if (oauthWindow) oauthWindow.close();
       }
@@ -110,11 +111,13 @@ export class IntegrationDashboardComponent implements OnInit {
   if (!this.isConnected) return;
 
   this.loading = true; // show spinner
+  this.state.setConnected(false); // update navbar
   this.error = '';
 
   this.integrationService.resyncIntegration().subscribe({
     next: (res: any) => {
       this.loading = false;
+      this.state.setConnected(true); // update navbar
       // Optionally show a toast/snackbar
       console.log(`Resync complete: ${res.orgsFetched} org(s) fetched.`);
     },
