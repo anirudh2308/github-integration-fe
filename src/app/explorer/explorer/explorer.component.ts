@@ -66,6 +66,12 @@ export class ExplorerComponent implements OnInit {
     this.fetchData();
   }
 
+  onLimitChange(newLimit: number) {
+  this.limit = newLimit;
+  this.page = 1; // reset to first page when page size changes
+  this.fetchData();
+}
+
   onSearchChange(value: string) {
     this.search = value;
     this.page = 1;

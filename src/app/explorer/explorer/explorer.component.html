@@ -32,6 +32,7 @@
 
   <div class="pagination-controls" *ngIf="totalRows > 0">
     <button mat-button (click)="onPageChange(page - 1)" [disabled]="page <= 1">Prev</button>
+    <span>Showing {{ (page - 1) * limit + 1 }}–{{ Math.min(page * limit, totalRows) }} of {{ totalRows }}</span>
     <span>Page {{ page }} of {{ Math.ceil(totalRows / limit) }}</span>
     <button
       mat-button
@@ -41,4 +42,14 @@
       Next
     </button>
   </div>
+
+  <mat-form-field>
+  <mat-label>Rows per page</mat-label>
+  <mat-select [(value)]="limit" (selectionChange)="onLimitChange($event.value)">
+    <mat-option [value]="10">10</mat-option>
+    <mat-option [value]="25">25</mat-option>
+    <mat-option [value]="50">50</mat-option>
+    <mat-option [value]="100">100</mat-option>
+  </mat-select>
+</mat-form-field>
 </div>
