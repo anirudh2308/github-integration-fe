@@ -132,6 +132,8 @@ console.log('Keys used for columns:', Object.keys(data[0] || {}));
               sortable: true,
               filter: true,
               resizable: true,
+              wrapText: true,
+              autoHeight: true,
             }));
           }
 
