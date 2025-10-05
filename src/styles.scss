@@ -1,6 +1,20 @@
 @use '@angular/material' as mat;
 @include mat.core();
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+app-explorer, .explorer-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 $myapp-theme-primary: mat.m2-define-palette(mat.$m2-indigo-palette, A400, A100, A700);
 $myapp-theme-accent: mat.m2-define-palette(mat.$m2-indigo-palette);
 $myapp-theme-warn: mat.m2-define-palette(mat.$m2-red-palette);
