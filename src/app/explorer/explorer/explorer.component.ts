@@ -1,4 +1,3 @@
-// src/app/components/explorer/explorer.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ExplorerService } from '../../services/explorer.service';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
@@ -29,6 +28,9 @@ export class ExplorerComponent implements OnInit {
   entities = ['orgs', 'repos', 'commits', 'pulls', 'issues', 'users'];
   selectedEntity = 'orgs';
 
+  integrations = ['GitHub'];
+  selectedIntegration = 'GitHub';
+
   columnDefs: ColDef[] = [];
   defaultColDef: ColDef = {
     sortable: true,
@@ -56,6 +58,10 @@ export class ExplorerComponent implements OnInit {
     this.fetchData();
   }
 
+  onIntegrationChange(integration: string) {
+    this.selectedIntegration = integration;
+  }
+
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
   }
@@ -67,10 +73,10 @@ export class ExplorerComponent implements OnInit {
   }
 
   onLimitChange(newLimit: number) {
-  this.limit = newLimit;
-  this.page = 1; // reset to first page when page size changes
-  this.fetchData();
-}
+    this.limit = newLimit;
+    this.page = 1;
+    this.fetchData();
+  }
 
   onSearchChange(value: string) {
     this.search = value;
@@ -110,22 +116,19 @@ export class ExplorerComponent implements OnInit {
       )
       .subscribe({
         next: (res) => {
-  if (!res) {
-    console.error('No response received.');
-    this.rowData = [];
-    this.totalRows = 0;
-    this.loading = false;
-    return;
-  }
+          if (!res) {
+            console.error('No response received.');
+            this.rowData = [];
+            this.totalRows = 0;
+            this.loading = false;
+            return;
+          }
 
-  console.log('Raw response:', res);
+          console.log('Raw response:', res);
 
-  const data = Array.isArray(res.data) ? res.data : Array.isArray(res) ? res : [];
-  // console.log('Processed data sample:', data[0]);
-console.log('Keys used for columns:', Object.keys(data[0] || {}));
-  this.totalRows = res.total ?? data.length;
-          
-          // Build columns dynamically
+          const data = res.data;
+          this.totalRows = res.total;
+
           if (data.length) {
             this.columnDefs = Object.keys(data[0]).map((key) => ({
               field: key,
@@ -137,10 +140,7 @@ console.log('Keys used for columns:', Object.keys(data[0] || {}));
             }));
           }
 
-          // Angular binding handles table refresh — no setRowData needed
           this.rowData = data;
-          // console.log(this.totalRows + " " + this.rowData[0]['id'])
-          // console.log(this.columnDefs)
           this.loading = false;
         },
         error: (err) => {
