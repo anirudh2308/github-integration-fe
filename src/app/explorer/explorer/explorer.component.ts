@@ -129,7 +129,7 @@ export class ExplorerComponent implements OnInit {
           const data = res.data;
           this.totalRows = res.total;
 
-          if (data.length) {
+          if (data?.length) {
             this.columnDefs = Object.keys(data[0]).map((key) => ({
               field: key,
               sortable: true,
