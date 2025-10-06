@@ -32,6 +32,7 @@
           [pagination]="false"
           (gridReady)="onGridReady($event, collection.entityName)"
           (sortChanged)="onSortChanged($event, collection)"
+          (filterChanged)="onFilterChanged($event, collection)"
         ></ag-grid-angular>
 
         <div class="pagination-controls" *ngIf="collection.total > 0">

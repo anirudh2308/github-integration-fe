@@ -90,6 +90,11 @@ export class ExplorerComponent implements OnInit {
     this.fetchData();
   }
 
+  onFilterChanged(event: any) {
+    const filterModel = event.api.getFilterModel(); // AG Grid returns { colId: {filterType, ...} }
+    this.fetchData(filterModel);
+  }
+
   onSortChanged(event: any) {
     const sortModel = event.api.getSortModel();
     if (sortModel.length) {
@@ -102,7 +107,7 @@ export class ExplorerComponent implements OnInit {
     this.fetchData();
   }
 
-  private fetchData() {
+  private fetchData(filters: any = {}) {
     this.loading = true;
 
     this.explorerService
@@ -112,19 +117,17 @@ export class ExplorerComponent implements OnInit {
         this.limit,
         this.sortField,
         this.sortOrder,
-        this.search
+        this.search,
+        filters
       )
       .subscribe({
         next: (res) => {
+          this.loading = false;
           if (!res) {
-            console.error('No response received.');
             this.rowData = [];
             this.totalRows = 0;
-            this.loading = false;
             return;
           }
-
-          console.log('Raw response:', res);
 
           const data = res.data;
           this.totalRows = res.total;
@@ -141,7 +144,6 @@ export class ExplorerComponent implements OnInit {
           }
 
           this.rowData = data;
-          this.loading = false;
         },
         error: (err) => {
           console.error('Fetch failed:', err);

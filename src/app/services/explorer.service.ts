@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExplorerService {
   private baseUrl = 'http://localhost:3000/api/entity'; // backend endpoint
@@ -17,7 +17,8 @@ export class ExplorerService {
     limit: number = 50,
     sortField: string = 'id',
     sortOrder: 'asc' | 'desc' = 'asc',
-    search: string = ''
+    search: string = '',
+    filters: any = {}
   ): Observable<any> {
     let params = new HttpParams()
       .set('page', page)
@@ -25,6 +26,11 @@ export class ExplorerService {
       .set('sortField', sortField)
       .set('sortOrder', sortOrder)
       .set('search', search);
+
+    console.log(filters);
+    if (filters && Object.keys(filters).length > 0) {
+      params = params.set('filters', JSON.stringify(filters));
+    }
 
     return this.http.get(`${this.baseUrl}/${entity}`, { params });
   }

@@ -20,6 +20,7 @@ interface CollectionData {
   limit: number;
   sortField: string;
   sortOrder: 'asc' | 'desc';
+  filters?: any; // added filters
 }
 
 @Component({
@@ -99,6 +100,12 @@ export class AgGridGlobalSearchComponent implements OnInit {
     this.fetchCollection(collection);
   }
 
+  onFilterChanged(event: any, collection: CollectionData) {
+    collection.filters = event.api.getFilterModel() || {};
+    collection.page = 1; // reset to first page on filter
+    this.fetchCollection(collection);
+  }
+
   private fetchAllCollections() {
     this.loading = true;
     this.globalSearchService
@@ -138,6 +145,7 @@ export class AgGridGlobalSearchComponent implements OnInit {
                 limit: 50,
                 sortField: 'id',
                 sortOrder: 'asc',
+                filters: {}, // initialize empty filters
               } as CollectionData;
             });
 
@@ -153,6 +161,7 @@ export class AgGridGlobalSearchComponent implements OnInit {
 
   private fetchCollection(collection: CollectionData) {
     this.loading = true;
+    const filtersParam = collection.filters || {};
     this.explorerService
       .getEntityData(
         collection.entityName,
@@ -160,7 +169,8 @@ export class AgGridGlobalSearchComponent implements OnInit {
         collection.limit,
         collection.sortField,
         collection.sortOrder,
-        this.search
+        this.search,
+        filtersParam
       )
       .subscribe((res: any) => {
         collection.data = res.data || [];
