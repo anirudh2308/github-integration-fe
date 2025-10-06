@@ -1,5 +1,5 @@
+// src/app/components/ag-grid-global-search/ag-grid-global-search.component.ts
 import { Component, OnInit } from '@angular/core';
-import { ExplorerService } from '../../services/explorer.service';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,9 +8,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AgGridModule } from 'ag-grid-angular';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { GlobalSearchService } from '../../services/global-search.service';
+
+interface CollectionData {
+  entityName: string;
+  data: any[];
+  total: number;
+  columnDefs: ColDef[];
+}
 
 @Component({
   selector: 'app-ag-grid-wrapper',
+  standalone: true,
   imports: [
     CommonModule,
     AgGridModule,
@@ -18,20 +28,21 @@ import { AgGridModule } from 'ag-grid-angular';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
+    MatExpansionModule,
     FormsModule,
   ],
-  standalone: true,
   templateUrl: './ag-grid-global-search.component.html',
-  styleUrl: './ag-grid-global-search.component.scss',
+  styleUrls: ['./ag-grid-global-search.component.scss'],
 })
 export class AgGridGlobalSearchComponent implements OnInit {
   entities = ['orgs', 'repos', 'commits', 'pulls', 'issues', 'users'];
-  selectedEntity = 'orgs';
 
-  integrations = ['GitHub'];
-  selectedIntegration = 'GitHub';
+  // Each entity will have its own section in the accordion
+  allCollectionsData: CollectionData[] = [];
 
-  columnDefs: ColDef[] = [];
+  columnDefs: { [key: string]: ColDef[] } = {};
+  gridApis: { [key: string]: GridApi } = {};
+
   defaultColDef: ColDef = {
     sortable: true,
     filter: true,
@@ -39,10 +50,9 @@ export class AgGridGlobalSearchComponent implements OnInit {
     flex: 1,
   };
 
-  rowData: any[] = [];
-  totalRows = 0;
-  page = 1;
+  // Global params (shared for now)
   limit = 50;
+  page = 1;
   sortField = 'id';
   sortOrder: 'asc' | 'desc' = 'asc';
   search = '';
@@ -50,26 +60,14 @@ export class AgGridGlobalSearchComponent implements OnInit {
   loading = false;
   Math = Math;
 
-  private gridApi!: GridApi;
-
-  constructor(private explorerService: ExplorerService) {}
+  constructor(private globalSearchService: GlobalSearchService) {}
 
   ngOnInit(): void {
     this.fetchData();
   }
 
-  onIntegrationChange(integration: string) {
-    this.selectedIntegration = integration;
-  }
-
-  onGridReady(params: GridReadyEvent) {
-    this.gridApi = params.api;
-  }
-
-  onEntityChange(entity: string) {
-    this.selectedEntity = entity;
-    this.page = 1;
-    this.fetchData();
+  onGridReady(params: GridReadyEvent, entityName: string) {
+    this.gridApis[entityName] = params.api;
   }
 
   onLimitChange(newLimit: number) {
@@ -79,20 +77,20 @@ export class AgGridGlobalSearchComponent implements OnInit {
   }
 
   onSearchChange(value: string) {
-    this.search = value;
+    this.search = value.trim();
     this.page = 1;
     this.fetchData();
   }
 
   onPageChange(newPage: number) {
-    if (newPage < 1 || newPage > Math.ceil(this.totalRows / this.limit)) return;
+    if (newPage < 1) return;
     this.page = newPage;
     this.fetchData();
   }
 
-  onSortChanged(event: any) {
+  onSortChanged(event: any, entityName: string) {
     const sortModel = event.api.getSortModel();
-    if (sortModel.length) {
+    if (sortModel?.length) {
       this.sortField = sortModel[0].colId;
       this.sortOrder = sortModel[0].sort;
     } else {
@@ -105,9 +103,8 @@ export class AgGridGlobalSearchComponent implements OnInit {
   private fetchData() {
     this.loading = true;
 
-    this.explorerService
-      .getEntityData(
-        this.selectedEntity,
+    this.globalSearchService
+      .fetchAllCollections(
         this.page,
         this.limit,
         this.sortField,
@@ -116,36 +113,48 @@ export class AgGridGlobalSearchComponent implements OnInit {
       )
       .subscribe({
         next: (res) => {
-          if (!res) {
-            console.error('No response received.');
-            this.rowData = [];
-            this.totalRows = 0;
+          if (!res?.results) {
+            this.allCollectionsData = [];
             this.loading = false;
             return;
           }
 
-          console.log('Raw response:', res);
+          console.log('Raw global response:', res);
 
-          const data = res.data;
-          this.totalRows = res.total;
+          // Build one accordion section per entity
+          this.allCollectionsData = Object.entries(res.results)
+            .filter(([_, entityResult]: any) => entityResult?.data?.length)
+            .map(([entityName, entityResult]: any) => {
+              const data = entityResult.data;
+              const total = entityResult.total || data.length;
 
-          if (data?.length) {
-            this.columnDefs = Object.keys(data[0]).map((key) => ({
-              field: key,
-              sortable: true,
-              filter: true,
-              resizable: true,
-              wrapText: true,
-              autoHeight: true,
-            }));
-          }
+              const columnDefs =
+                data.length > 0
+                  ? Object.keys(data[0]).map((key) => ({
+                      field: key,
+                      sortable: true,
+                      filter: true,
+                      resizable: true,
+                      wrapText: true,
+                      autoHeight: true,
+                    }))
+                  : [];
 
-          this.rowData = data;
+              this.columnDefs[entityName] = columnDefs;
+
+              return {
+                entityName,
+                data,
+                total,
+                columnDefs,
+              } as CollectionData;
+            });
+
           this.loading = false;
         },
         error: (err) => {
-          console.error('Fetch failed:', err);
-          this.rowData = [];
+          console.error('Global fetch failed:', err);
+          this.allCollectionsData = [];
           this.loading = false;
         },
       });

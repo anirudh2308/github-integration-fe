@@ -1,27 +1,6 @@
 <div class="global-search-container">
   <div class="toolbar">
     <mat-form-field>
-      <mat-label>Active Integrations</mat-label>
-      <mat-select
-        [(value)]="selectedIntegration"
-        (selectionChange)="onIntegrationChange($event.value)"
-      >
-        <mat-option *ngFor="let i of integrations" [value]="i">{{
-          i
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Entity</mat-label>
-      <mat-select
-        [(value)]="selectedEntity"
-        (selectionChange)="onEntityChange($event.value)"
-      >
-        <mat-option *ngFor="let e of entities" [value]="e">{{ e }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field>
       <mat-label>Search</mat-label>
       <input
         matInput
@@ -32,47 +11,67 @@
     </mat-form-field>
   </div>
 
-  <ag-grid-angular
-    style="width: 100%; height: 600px"
-    class="ag-theme-alpine"
-    [columnDefs]="columnDefs"
-    [defaultColDef]="defaultColDef"
-    [rowData]="rowData"
-    [pagination]="false"
-    (gridReady)="onGridReady($event)"
-    (sortChanged)="onSortChanged($event)"
-  >
-  </ag-grid-angular>
+  <mat-accordion>
+    <mat-expansion-panel
+      *ngFor="let collection of allCollectionsData"
+      [expanded]="false"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ collection.entityName }} ({{ collection.total }} results)
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-  <div class="pagination-controls" *ngIf="totalRows > 0">
-    <button mat-button (click)="onPageChange(page - 1)" [disabled]="page <= 1">
-      Prev
-    </button>
-    <span
-      >Showing {{ (page - 1) * limit + 1 }}–{{
-        Math.min(page * limit, totalRows)
-      }}
-      of {{ totalRows }}</span
-    >
-    <span>Page {{ page }} of {{ Math.ceil(totalRows / limit) }}</span>
-    <button
-      mat-button
-      (click)="onPageChange(page + 1)"
-      [disabled]="page >= Math.ceil(totalRows / limit)"
-    >
-      Next
-    </button>
-    <mat-form-field>
-      <mat-label>Rows per page</mat-label>
-      <mat-select
-        [(value)]="limit"
-        (selectionChange)="onLimitChange($event.value)"
-      >
-        <mat-option [value]="10">10</mat-option>
-        <mat-option [value]="25">25</mat-option>
-        <mat-option [value]="50">50</mat-option>
-        <mat-option [value]="100">100</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+      <div class="global-search-grid">
+        <ag-grid-angular
+          style="width: 100%; height: 600px"
+          class="ag-theme-alpine"
+          [columnDefs]="collection.columnDefs"
+          [defaultColDef]="defaultColDef"
+          [rowData]="collection.data"
+          [pagination]="false"
+          (gridReady)="onGridReady($event, collection.entityName)"
+          (sortChanged)="onSortChanged($event, collection.entityName)"
+        ></ag-grid-angular>
+
+        <div class="pagination-controls" *ngIf="collection.total > 0">
+          <button
+            mat-button
+            (click)="onPageChange(page - 1)"
+            [disabled]="page <= 1"
+          >
+            Prev
+          </button>
+          <span>
+            Showing {{ (page - 1) * limit + 1 }}–{{
+              Math.min(page * limit, collection.total)
+            }}
+            of {{ collection.total }}
+          </span>
+          <span>
+            Page {{ page }} of {{ Math.ceil(collection.total / limit) }}
+          </span>
+          <button
+            mat-button
+            (click)="onPageChange(page + 1)"
+            [disabled]="page >= Math.ceil(collection.total / limit)"
+          >
+            Next
+          </button>
+          <mat-form-field>
+            <mat-label>Rows per page</mat-label>
+            <mat-select
+              [(value)]="limit"
+              (selectionChange)="onLimitChange($event.value)"
+            >
+              <mat-option [value]="10">10</mat-option>
+              <mat-option [value]="25">25</mat-option>
+              <mat-option [value]="50">50</mat-option>
+              <mat-option [value]="100">100</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
