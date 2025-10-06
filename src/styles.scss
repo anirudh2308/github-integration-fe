@@ -1,32 +1,40 @@
 @use "@angular/material" as mat;
+
 @include mat.core();
 
 html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
   width: 100%;
+  height: 100%;
+  background-color: #fafafa;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow-x: hidden;
 }
 
+app-root,
 app-explorer,
 app-ag-grid-global-search,
 .explorer-container,
 .global-search-container {
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-$myapp-theme-primary: mat.m2-define-palette(
-  mat.$m2-indigo-palette,
-  A400,
-  A100,
-  A700
-);
-$myapp-theme-accent: mat.m2-define-palette(mat.$m2-indigo-palette);
-$myapp-theme-warn: mat.m2-define-palette(mat.$m2-red-palette);
+.mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+$myapp-theme-primary: mat.m2-define-palette(mat.$m2-blue-grey-palette, 800);
+$myapp-theme-accent: mat.m2-define-palette(mat.$m2-indigo-palette, 300);
+$myapp-theme-warn: mat.m2-define-palette(mat.$m2-red-palette, 400);
 
 $myapp-theme: mat.m2-define-light-theme(
   (
