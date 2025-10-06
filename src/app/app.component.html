@@ -3,7 +3,12 @@
   <span class="spacer"></span>
 
   <button mat-button routerLink="/integration">Integration</button>
-  <button mat-button routerLink="/explorer" *ngIf="isConnected">Explorer</button>
+  <button mat-button routerLink="/explorer" *ngIf="isConnected">
+    Explorer
+  </button>
+  <button mat-button routerLink="/globalSearch" *ngIf="isConnected">
+    Global Search
+  </button>
 </mat-toolbar>
 
 <div class="main-content">
