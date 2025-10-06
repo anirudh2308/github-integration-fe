@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AgGridWrapperComponent } from './ag-grid-wrapper.component';
+import { AgGridGlobalSearchComponent } from './ag-grid-global-search.component';
 
 describe('AgGridWrapperComponent', () => {
-  let component: AgGridWrapperComponent;
-  let fixture: ComponentFixture<AgGridWrapperComponent>;
+  let component: AgGridGlobalSearchComponent;
+  let fixture: ComponentFixture<AgGridGlobalSearchComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AgGridWrapperComponent]
-    })
-    .compileComponents();
+      imports: [AgGridGlobalSearchComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(AgGridWrapperComponent);
+    fixture = TestBed.createComponent(AgGridGlobalSearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
