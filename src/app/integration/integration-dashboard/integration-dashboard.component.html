@@ -1,6 +1,5 @@
 <div class="dashboard-container" *ngIf="!loading; else loadingState">
   <mat-card class="integration-card">
-    <!-- Header -->
     <div class="card-header">
       <img
         *ngIf="user?.avatar_url"
@@ -11,12 +10,11 @@
       <div>
         <h2>{{ user?.name || "GitHub Integration" }}</h2>
         <p class="subtitle" *ngIf="isConnected && user?.login">
-          {{ '@' + user?.login }}
+          {{ "@" + user?.login }}
         </p>
       </div>
     </div>
 
-    <!-- Status -->
     <div class="status-section">
       <mat-chip-listbox>
         <mat-chip
@@ -29,13 +27,11 @@
       </mat-chip-listbox>
 
       <p *ngIf="isConnected" class="connected-at">
-        Connected on {{ connectedAt | date: "medium" }}
+        Connected on {{ connectedAt | date : "medium" }}
       </p>
     </div>
 
-    <!-- Actions -->
     <div class="actions">
-      <!-- Connect button -->
       <button
         mat-raised-button
         color="primary"
@@ -46,13 +42,10 @@
         Connect GitHub
       </button>
 
-      <!-- Expansion panel for connected actions -->
       <mat-accordion *ngIf="isConnected" class="connected-panel">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
-            <mat-panel-title>
-              Manage Connection
-            </mat-panel-title>
+            <mat-panel-title> Manage Connection </mat-panel-title>
           </mat-expansion-panel-header>
 
           <div class="panel-actions">
