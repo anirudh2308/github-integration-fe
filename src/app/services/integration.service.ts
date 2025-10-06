@@ -16,22 +16,18 @@ export class IntegrationService {
 
   constructor(private http: HttpClient) {}
 
-  /** ✅ Get GitHub integration status */
   getStatus(): Observable<IntegrationStatus> {
     return this.http.get<IntegrationStatus>(`${this.baseUrl}/status`);
   }
 
-  /** ✅ Start OAuth flow */
   connectIntegration(): void {
     window.open(`${this.baseUrl}/connect`, '_blank');
   }
 
-  /** ✅ Remove GitHub integration */
   removeIntegration(): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/remove`);
   }
 
-  /** ✅ Resync integration data */
   resyncIntegration(): Observable<any> {
     return this.http.post(`${this.baseUrl}/resync`, {});
   }

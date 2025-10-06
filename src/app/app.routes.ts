@@ -7,6 +7,6 @@ export const routes: Routes = [
   { path: 'integration', component: IntegrationDashboardComponent },
   { path: 'explorer', component: ExplorerComponent },
   { path: 'globalSearch', component: AgGridGlobalSearchComponent },
-  { path: '', redirectTo: '/integration', pathMatch: 'full' }, // default landing page
-  { path: '**', redirectTo: '/integration' }, // fallback for unknown routes
+  { path: '', redirectTo: '/integration', pathMatch: 'full' },
+  { path: '**', redirectTo: '/integration' },
 ];

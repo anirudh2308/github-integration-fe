@@ -20,7 +20,7 @@ interface CollectionData {
   limit: number;
   sortField: string;
   sortOrder: 'asc' | 'desc' | null | undefined;
-  filters?: any; // added filters
+  filters?: any;
 }
 
 @Component({
@@ -104,13 +104,13 @@ export class AgGridGlobalSearchComponent implements OnInit {
     }
 
     const filterModel = gridApi.getFilterModel() || {};
-    collection.filters = filterModel; // keep filters synced
+    collection.filters = filterModel;
     this.fetchCollection(collection);
   }
 
   onFilterChanged(event: any, collection: CollectionData) {
     collection.filters = event.api.getFilterModel() || {};
-    collection.page = 1; // reset to first page on filter
+    collection.page = 1;
     this.fetchCollection(collection);
   }
 
@@ -153,7 +153,7 @@ export class AgGridGlobalSearchComponent implements OnInit {
                 limit: 50,
                 sortField: 'id',
                 sortOrder: 'asc',
-                filters: {}, // initialize empty filters
+                filters: {},
               } as CollectionData;
             });
 

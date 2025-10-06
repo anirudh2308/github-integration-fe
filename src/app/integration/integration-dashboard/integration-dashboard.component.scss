@@ -1,18 +1,16 @@
-/* Container */
 .dashboard-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background: #fefefe;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
-/* Card */
 .integration-card {
-  width: 520px;             /* increased from 420px */
-  padding: 32px;            /* increased from 24px */
-  border-radius: 20px;      /* slightly bigger radius */
+  width: 520px;
+  padding: 32px;
+  border-radius: 20px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
   background: #ffffff;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -23,45 +21,42 @@
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
 }
 
-/* Header */
 .card-header {
   display: flex;
   align-items: center;
-  gap: 24px;                /* increased gap */
-  margin-bottom: 24px;      /* increased margin */
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
 .avatar {
-  width: 80px;              /* increased from 60px */
-  height: 80px;             /* increased from 60px */
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
 }
 
 h2 {
   margin: 0;
   font-weight: 600;
-  font-size: 1.5rem;        /* increased from 1.25rem */
+  font-size: 1.5rem;
   color: #212121;
 }
 
 .subtitle {
   color: #666;
-  font-size: 1rem;          /* increased from 0.9rem */
+  font-size: 1rem;
 }
 
-/* Status */
 .status-section {
-  margin: 24px 0;           /* increased margin */
+  margin: 24px 0;
   text-align: center;
 }
 
 .connected-at {
-  font-size: 0.95rem;       /* increased from 0.85rem */
+  font-size: 0.95rem;
   color: #999;
   margin-top: 30px;
 }
 
-/* Actions */
 .actions {
   display: flex;
   flex-direction: column;
@@ -70,22 +65,21 @@ h2 {
 
 .connected-panel {
   width: 100%;
-  margin-top: 16px;         /* increased margin */
+  margin-top: 16px;
 }
 
 .panel-actions {
   display: flex;
   justify-content: space-between;
-  gap: 16px;                /* increased gap */
-  margin-top: 12px;         /* increased margin */
+  gap: 16px;
+  margin-top: 12px;
 }
 
-/* Loading */
 .loading-spinner {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 80vh;
-  gap: 24px;                /* increased gap */
+  gap: 24px;
 }

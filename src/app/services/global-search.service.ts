@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class GlobalSearchService {
-  private baseUrl = 'http://localhost:3000/api/globalSearch'; // backend endpoint
+  private baseUrl = 'http://localhost:3000/api/globalSearch';
 
   constructor(private http: HttpClient) {}
 

@@ -91,7 +91,7 @@ export class ExplorerComponent implements OnInit {
   }
 
   onFilterChanged(event: any) {
-    const filterModel = event.api.getFilterModel(); // AG Grid returns { colId: {filterType, ...} }
+    const filterModel = event.api.getFilterModel();
     this.fetchData(filterModel);
   }
 

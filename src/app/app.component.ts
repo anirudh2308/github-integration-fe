@@ -7,10 +7,16 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterModule, CommonModule, MatToolbarModule, MatButtonModule],
+  imports: [
+    RouterOutlet,
+    RouterModule,
+    CommonModule,
+    MatToolbarModule,
+    MatButtonModule,
+  ],
   standalone: true,
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']   // fixed typo
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   isConnected = false;
@@ -18,6 +24,6 @@ export class AppComponent implements OnInit {
   constructor(private state: ConnectionStateService) {}
 
   ngOnInit() {
-    this.state.isConnected$.subscribe(val => this.isConnected = val);
+    this.state.isConnected$.subscribe((val) => (this.isConnected = val));
   }
 }
