@@ -31,7 +31,7 @@
           [rowData]="collection.data"
           [pagination]="false"
           (gridReady)="onGridReady($event, collection.entityName)"
-          (sortChanged)="onSortChanged($event, collection)"
+          (sortChanged)="onSortChanged(collection)"
           (filterChanged)="onFilterChanged($event, collection)"
         ></ag-grid-angular>
 

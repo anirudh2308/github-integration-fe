@@ -16,7 +16,7 @@ export class ExplorerService {
     page: number = 1,
     limit: number = 50,
     sortField: string = 'id',
-    sortOrder: 'asc' | 'desc' = 'asc',
+    sortOrder: 'asc' | 'desc' | null | undefined = 'asc',
     search: string = '',
     filters: any = {}
   ): Observable<any> {
@@ -24,7 +24,7 @@ export class ExplorerService {
       .set('page', page)
       .set('limit', limit)
       .set('sortField', sortField)
-      .set('sortOrder', sortOrder)
+      .set('sortOrder', sortOrder ? sortOrder : 'asc')
       .set('search', search);
 
     console.log(filters);

@@ -19,7 +19,7 @@ interface CollectionData {
   page: number;
   limit: number;
   sortField: string;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: 'asc' | 'desc' | null | undefined;
   filters?: any; // added filters
 }
 
@@ -88,15 +88,23 @@ export class AgGridGlobalSearchComponent implements OnInit {
     this.fetchCollection(collection);
   }
 
-  onSortChanged(event: any, collection: CollectionData) {
-    const sortModel = event.api.getSortModel();
-    if (sortModel?.length) {
-      collection.sortField = sortModel[0].colId;
-      collection.sortOrder = sortModel[0].sort;
+  onSortChanged(collection: CollectionData) {
+    const gridApi = this.gridApis[collection.entityName];
+    if (!gridApi) return;
+
+    const columnState = gridApi.getColumnState();
+    const sortedColumns = columnState.filter((col) => col.sort);
+
+    if (sortedColumns.length > 0) {
+      collection.sortField = sortedColumns[0].colId;
+      collection.sortOrder = sortedColumns[0].sort;
     } else {
       collection.sortField = 'id';
       collection.sortOrder = 'asc';
     }
+
+    const filterModel = gridApi.getFilterModel() || {};
+    collection.filters = filterModel; // keep filters synced
     this.fetchCollection(collection);
   }
 

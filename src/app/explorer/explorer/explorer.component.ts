@@ -44,7 +44,7 @@ export class ExplorerComponent implements OnInit {
   page = 1;
   limit = 50;
   sortField = 'id';
-  sortOrder: 'asc' | 'desc' = 'asc';
+  sortOrder: 'asc' | 'desc' | null | undefined = 'asc';
   search = '';
 
   loading = false;
@@ -95,16 +95,22 @@ export class ExplorerComponent implements OnInit {
     this.fetchData(filterModel);
   }
 
-  onSortChanged(event: any) {
-    const sortModel = event.api.getSortModel();
-    if (sortModel.length) {
-      this.sortField = sortModel[0].colId;
-      this.sortOrder = sortModel[0].sort;
+  onSortChanged() {
+    if (!this.gridApi) return;
+
+    const columnState = this.gridApi.getColumnState();
+    const sortedColumns = columnState.filter((col) => col.sort);
+
+    if (sortedColumns.length > 0) {
+      this.sortField = sortedColumns[0].colId;
+      this.sortOrder = sortedColumns[0].sort;
     } else {
       this.sortField = 'id';
       this.sortOrder = 'asc';
     }
-    this.fetchData();
+
+    const filterModel = this.gridApi.getFilterModel() || {};
+    this.fetchData(filterModel);
   }
 
   private fetchData(filters: any = {}) {
