@@ -1,4 +1,3 @@
-// src/app/components/ag-grid-global-search/ag-grid-global-search.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { CommonModule } from '@angular/common';
@@ -10,16 +9,21 @@ import { MatSelectModule } from '@angular/material/select';
 import { AgGridModule } from 'ag-grid-angular';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { GlobalSearchService } from '../../services/global-search.service';
+import { ExplorerService } from '../../services/explorer.service';
 
 interface CollectionData {
   entityName: string;
   data: any[];
   total: number;
   columnDefs: ColDef[];
+  page: number;
+  limit: number;
+  sortField: string;
+  sortOrder: 'asc' | 'desc';
 }
 
 @Component({
-  selector: 'app-ag-grid-wrapper',
+  selector: 'app-ag-grid-global-search',
   standalone: true,
   imports: [
     CommonModule,
@@ -36,12 +40,9 @@ interface CollectionData {
 })
 export class AgGridGlobalSearchComponent implements OnInit {
   entities = ['orgs', 'repos', 'commits', 'pulls', 'issues', 'users'];
-
-  // Each entity will have its own section in the accordion
   allCollectionsData: CollectionData[] = [];
-
   columnDefs: { [key: string]: ColDef[] } = {};
-  gridApis: { [key: string]: GridApi } = {};
+  gridApis: { [entity: string]: GridApi } = {};
 
   defaultColDef: ColDef = {
     sortable: true,
@@ -50,85 +51,72 @@ export class AgGridGlobalSearchComponent implements OnInit {
     flex: 1,
   };
 
-  // Global params (shared for now)
-  limit = 50;
-  page = 1;
-  sortField = 'id';
-  sortOrder: 'asc' | 'desc' = 'asc';
   search = '';
-
   loading = false;
   Math = Math;
 
-  constructor(private globalSearchService: GlobalSearchService) {}
+  constructor(
+    private globalSearchService: GlobalSearchService,
+    private explorerService: ExplorerService
+  ) {}
 
   ngOnInit(): void {
-    this.fetchData();
+    this.fetchAllCollections();
   }
 
   onGridReady(params: GridReadyEvent, entityName: string) {
     this.gridApis[entityName] = params.api;
   }
 
-  onLimitChange(newLimit: number) {
-    this.limit = newLimit;
-    this.page = 1;
-    this.fetchData();
-  }
-
   onSearchChange(value: string) {
     this.search = value.trim();
-    this.page = 1;
-    this.fetchData();
+    this.allCollectionsData.forEach((col) => (col.page = 1));
+    this.fetchAllCollections();
   }
 
-  onPageChange(newPage: number) {
-    if (newPage < 1) return;
-    this.page = newPage;
-    this.fetchData();
+  onPageChange(collection: CollectionData, newPage: number) {
+    if (newPage < 1 || newPage > Math.ceil(collection.total / collection.limit))
+      return;
+    collection.page = newPage;
+    this.fetchCollection(collection);
   }
 
-  onSortChanged(event: any, entityName: string) {
+  onLimitChange(collection: CollectionData, newLimit: number) {
+    collection.limit = newLimit;
+    collection.page = 1;
+    this.fetchCollection(collection);
+  }
+
+  onSortChanged(event: any, collection: CollectionData) {
     const sortModel = event.api.getSortModel();
     if (sortModel?.length) {
-      this.sortField = sortModel[0].colId;
-      this.sortOrder = sortModel[0].sort;
+      collection.sortField = sortModel[0].colId;
+      collection.sortOrder = sortModel[0].sort;
     } else {
-      this.sortField = 'id';
-      this.sortOrder = 'asc';
+      collection.sortField = 'id';
+      collection.sortOrder = 'asc';
     }
-    this.fetchData();
+    this.fetchCollection(collection);
   }
 
-  private fetchData() {
+  private fetchAllCollections() {
     this.loading = true;
-
     this.globalSearchService
-      .fetchAllCollections(
-        this.page,
-        this.limit,
-        this.sortField,
-        this.sortOrder,
-        this.search
-      )
+      .fetchAllCollections(1, 50, 'id', 'asc', this.search)
       .subscribe({
-        next: (res) => {
+        next: (res: any) => {
           if (!res?.results) {
             this.allCollectionsData = [];
             this.loading = false;
             return;
           }
 
-          console.log('Raw global response:', res);
-
-          // Build one accordion section per entity
           this.allCollectionsData = Object.entries(res.results)
             .filter(([_, entityResult]: any) => entityResult?.data?.length)
             .map(([entityName, entityResult]: any) => {
               const data = entityResult.data;
               const total = entityResult.total || data.length;
-
-              const columnDefs =
+              const columnDefs: ColDef[] =
                 data.length > 0
                   ? Object.keys(data[0]).map((key) => ({
                       field: key,
@@ -139,7 +127,6 @@ export class AgGridGlobalSearchComponent implements OnInit {
                       autoHeight: true,
                     }))
                   : [];
-
               this.columnDefs[entityName] = columnDefs;
 
               return {
@@ -147,6 +134,10 @@ export class AgGridGlobalSearchComponent implements OnInit {
                 data,
                 total,
                 columnDefs,
+                page: 1,
+                limit: 50,
+                sortField: 'id',
+                sortOrder: 'asc',
               } as CollectionData;
             });
 
@@ -157,6 +148,24 @@ export class AgGridGlobalSearchComponent implements OnInit {
           this.allCollectionsData = [];
           this.loading = false;
         },
+      });
+  }
+
+  private fetchCollection(collection: CollectionData) {
+    this.loading = true;
+    this.explorerService
+      .getEntityData(
+        collection.entityName,
+        collection.page,
+        collection.limit,
+        collection.sortField,
+        collection.sortOrder,
+        this.search
+      )
+      .subscribe((res: any) => {
+        collection.data = res.data || [];
+        collection.total = res.total || collection.data.length;
+        this.loading = false;
       });
   }
 }

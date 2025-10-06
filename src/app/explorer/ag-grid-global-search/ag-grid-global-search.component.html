@@ -31,38 +31,41 @@
           [rowData]="collection.data"
           [pagination]="false"
           (gridReady)="onGridReady($event, collection.entityName)"
-          (sortChanged)="onSortChanged($event, collection.entityName)"
+          (sortChanged)="onSortChanged($event, collection)"
         ></ag-grid-angular>
 
         <div class="pagination-controls" *ngIf="collection.total > 0">
           <button
             mat-button
-            (click)="onPageChange(page - 1)"
-            [disabled]="page <= 1"
+            (click)="onPageChange(collection, collection.page - 1)"
+            [disabled]="collection.page <= 1"
           >
             Prev
           </button>
           <span>
-            Showing {{ (page - 1) * limit + 1 }}–{{
-              Math.min(page * limit, collection.total)
-            }}
+            Showing {{ (collection.page - 1) * collection.limit + 1 }}–
+            {{ Math.min(collection.page * collection.limit, collection.total) }}
             of {{ collection.total }}
           </span>
           <span>
-            Page {{ page }} of {{ Math.ceil(collection.total / limit) }}
+            Page {{ collection.page }} of
+            {{ Math.ceil(collection.total / collection.limit) }}
           </span>
           <button
             mat-button
-            (click)="onPageChange(page + 1)"
-            [disabled]="page >= Math.ceil(collection.total / limit)"
+            (click)="onPageChange(collection, collection.page + 1)"
+            [disabled]="
+              collection.page >= Math.ceil(collection.total / collection.limit)
+            "
           >
             Next
           </button>
+
           <mat-form-field>
             <mat-label>Rows per page</mat-label>
             <mat-select
-              [(value)]="limit"
-              (selectionChange)="onLimitChange($event.value)"
+              [value]="collection.limit"
+              (selectionChange)="onLimitChange(collection, $event.value)"
             >
               <mat-option [value]="10">10</mat-option>
               <mat-option [value]="25">25</mat-option>
